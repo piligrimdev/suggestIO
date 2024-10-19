@@ -1,0 +1,8 @@
+{% extends 'auth/base.html' %}
+
+{% block main %}
+    <form method="post">
+        {%  csrf_token %}
+        <button type="submit">Log out</button>
+    </form>
+{%  endblock %}

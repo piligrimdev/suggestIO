@@ -1,0 +1,12 @@
+{% extends 'auth/base.html' %}
+
+{% block main %}
+    {%  if error|length > 0 %}
+            <h2>Error: {{ error }}</h2>
+    {% endif %}
+    <form method="post">
+        {%  csrf_token %}
+        {{ form }}
+        <button type="submit">Register</button>
+    </form>
+{%  endblock %}
