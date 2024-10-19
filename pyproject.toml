@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "suggestio"
+version = "0.1.0"
+description = "Spotify playlist-wide suggestion service."
+authors = ["Your Name <you@example.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+Django = "^5.1.2"
+django-rest-framework = "^0.1.0"
+psycopg2-binary = "^2.9.10"
+django-redis = "^5.4.0"
+python-dotenv = "^1.0.1"
+django-debug-toolbar = "^4.4.6"
+gunicorn = "^23.0.0"
+drf-spectacular = "^0.27.2"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
