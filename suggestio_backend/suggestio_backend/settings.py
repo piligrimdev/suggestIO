@@ -11,6 +11,10 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+import os
+from dotenv import load_dotenv
+
+load_dotenv() # load .env vars
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,7 +29,7 @@ SECRET_KEY = 'django-insecure-u=$4zsg)sb-bov1xu%9@1e*ek#5+4(owsj9w9oqhg)1&7c^sw$
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0']
 
 
 # Application definition
@@ -37,6 +41,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    'django.contrib.postgres', # postgres integration
 ]
 
 MIDDLEWARE = [
@@ -73,10 +79,26 @@ WSGI_APPLICATION = 'suggestio_backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-DATABASES = {
+_old_DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',   # Используется PostgreSQL
+        #'NAME': 'postgres',
+        'NAME': os.getenv('PGSQL_NAME'), # Имя базы данных
+        #'USER': 'postgres',
+        'USER': os.getenv('PGSQL_USER'), # Имя пользователя
+        #'PASSWORD': 'postgres',
+        'PASSWORD': os.getenv('PGSQL_PASS'), # Пароль пользователя
+        #'HOST': 'pgdb',
+        'HOST': os.getenv('PGSQL_HOST'), # Наименование контейнера для базы данных в Docker Compose
+        #'PORT': '5432',
+        'PORT': os.getenv('PGSQL_PORT'),  # Порт базы данных
     }
 }
 
