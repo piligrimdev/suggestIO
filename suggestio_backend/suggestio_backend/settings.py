@@ -16,6 +16,8 @@ from dotenv import load_dotenv
 
 load_dotenv() # load .env vars
 
+FIELD_ENCRYPTION_KEY = os.getenv('FIELD_ENCRYPTION_KEY', '')
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -48,6 +50,7 @@ INSTALLED_APPS = [
 
     'django.contrib.postgres', # postgres integration
     'debug_toolbar',
+    'encrypted_model_fields',  # encryption for refresh auth tokens of SpotifyAPI
 
     'dev.apps.DevConfig',
 ]
