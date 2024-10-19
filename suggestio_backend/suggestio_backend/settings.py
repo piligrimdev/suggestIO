@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'encrypted_model_fields',  # encryption for refresh auth tokens of SpotifyAPI
 
     'dev.apps.DevConfig',
+    'suggestio.apps.SuggestioConfig',
 ]
 
 MIDDLEWARE = [
