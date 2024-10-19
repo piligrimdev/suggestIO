@@ -24,10 +24,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-u=$4zsg)sb-bov1xu%9@1e*ek#5+4(owsj9w9oqhg)1&7c^sw$'
+SECRET_KEY = os.getenv('DJANGO_SECRET')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = int(os.getenv('DEBUG', 0))
+
+INTERNAL_IPS = [  # debug toolbar
+    '127.0.0.1',
+]
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0']
 
@@ -43,6 +47,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'django.contrib.postgres', # postgres integration
+    'debug_toolbar',
 ]
 
 MIDDLEWARE = [
@@ -50,6 +55,9 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+
+    'debug_toolbar.middleware.DebugToolbarMiddleware',  # debug toolbar
+
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -99,6 +107,20 @@ DATABASES = {
         'HOST': os.getenv('PGSQL_HOST'), # Наименование контейнера для базы данных в Docker Compose
         #'PORT': '5432',
         'PORT': os.getenv('PGSQL_PORT'),  # Порт базы данных
+    }
+}
+
+REDIS_ADDR = os.getenv("REDIS_ADDR", "127.0.0.1")
+REDIS_PORT = os.getenv("REDIS_PORT", "6379")
+
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        #"LOCATION": "redis://127.0.0.1:6379/1",
+        "LOCATION": f"redis://{REDIS_ADDR}:{REDIS_PORT}/1",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
     }
 }
 
