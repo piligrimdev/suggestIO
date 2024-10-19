@@ -1,0 +1,13 @@
+{% extends 'dev/base.html' %}
+
+{% block main %}
+    <ul>
+    {% for ent in entities %}
+        <li>
+            {{ ent.Name }}
+        </li>
+        {% empty %}
+            <h2> nothing to show </h2>
+    {% endfor %}
+    </ul>
+{% endblock %}
