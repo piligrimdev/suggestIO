@@ -1,0 +1,10 @@
+{% extends 'suggestio/base.html' %}
+
+{% block main %}
+    {% if error is not None and error != '' %}
+            <h2>Error occured:</h2>
+            <b> {{ error }}</b>
+        {% else %}
+            <h2>Auth ok</h2>
+    {% endif %}
+{% endblock %}

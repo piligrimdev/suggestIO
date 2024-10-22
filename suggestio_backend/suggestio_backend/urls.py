@@ -25,4 +25,5 @@ urlpatterns = [
     path('__debug__/', include(debug_toolbar.urls)),
     path('dev/', include('dev.urls')),
     path('auth/', include('auth.urls')),
+    path('suggestio/', include('suggestio.urls')),
 ]

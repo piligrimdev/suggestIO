@@ -1,0 +1,10 @@
+{% extends 'suggestio/base.html' %}
+
+{% block main %}
+    {% if auth_link is not None%}
+            <h2>Before using suggestio, you should authenticate app in spotify:</h2>
+            <a href="{{auth_link}}">Spotify link</a>
+        {% else %}
+            <h2>You can use following functions: </h2>
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,11 @@
+{% extends 'suggestio/base.html' %}
+
+{% block main %}
+    {% if error is not None and error != '' %}
+            <h2>Error occured:</h2>
+            <b> {{ error }}</b>
+        {% else %}
+            <h2>Request result:</h2>
+            <b> {{ result }}</b>
+    {% endif %}
+{% endblock %}
