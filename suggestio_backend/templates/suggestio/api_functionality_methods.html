@@ -1,0 +1,24 @@
+{% extends 'suggestio/base.html' %}
+
+{% block main %}
+    <form action="#" method="get">
+        {% csrf_token %}
+        <input type="submit" class="btn" value="Click" name="liked_tracks">
+
+        <input type="text" name="audio_features_input" size="1"/>
+        <input type="submit" class="btn" value="Click" name="audio_features">
+
+        <input type="text" name="playlist_tracks_input" size="1"/>
+        <input type="submit" class="btn" value="Click" name="playlist_tracks">
+
+        <input type="text" name="track_recommendations_input" size="1"/>
+        <input type="submit" class="btn" value="Click" name="track_recommendations">
+
+        <input type="text" name="similar_artist_input" size="1"/>
+        <input type="submit" class="btn" value="Click" name="similar_artist">
+    </form>
+    {% if content is not None %}
+        <h2>Response: </h2>
+        <code> {{ content | linebreaks }}</code>
+    {% endif %}
+{% endblock %}

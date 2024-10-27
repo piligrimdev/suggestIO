@@ -10,6 +10,8 @@ from suggestio.spotify_api.authentication import hash_userid, SpotifyAuth
 from django.core.cache import cache
 from django.contrib.auth.models import User
 
+from suggestio.spotify_api.spotify_api import SpotifyAPI
+
 
 class AccessView(LoginRequiredMixin, UserPassesTestMixin, View):
     def get_permission_denied_message(self):
@@ -108,7 +110,29 @@ class TestRequestView(LoginRequiredMixin, UserPassesTestMixin, View):
 
             cache.set(str(u_id) + '_auth_token', auth_key, expires_in)
 
-        context['result'] = SpotifyAuth('').get_user_info(auth_key)
+        content = None
+        api = SpotifyAPI(auth_key)
 
-        return render(request, 'suggestio/test.html', context=context)
+        if request.GET.get('liked_tracks'):
+            content = api.users_saved_tracks()
+        elif request.GET.get('audio_features'):
+            track_id = request.GET.get('audio_features_input')
+            if track_id:
+                content = api.audio_features(track_id)
+        elif request.GET.get('playlist_tracks'):
+            playlist_id = request.GET.get('playlist_tracks_input')
+            if playlist_id:
+                content = api.playlist_tracks(playlist_id)
+        elif request.GET.get('track_recommendations'):
+            track_id = request.GET.get('track_recommendations_input')
+            if track_id:
+                content = api.track_recommendation({"seed_tracks": track_id})
+        elif request.GET.get('similar_artist'):
+            artist_id = request.GET.get('similar_artist_input')
+            if artist_id:
+                content = api.related_artists(artist_id)
+
+        context['content'] = content
+
+        return render(request, 'suggestio/api_functionality_methods.html', context=context)
 
