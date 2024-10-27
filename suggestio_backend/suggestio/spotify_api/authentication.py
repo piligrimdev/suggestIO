@@ -109,15 +109,3 @@ class SpotifyAuth(object):
             return new_r_token, new_a_token, expires_in
         else:
             raise Exception(js['error'])
-
-    def get_user_info(self, token: str) -> str:
-        headers = self.headers.copy()
-        headers['Authorization'] = f'Bearer {token}'
-
-        data = requests.get('https://api.spotify.com/v1/me', headers=headers)
-        js = data.json()
-        if data.ok:
-            return js['id']
-        else:
-            return js['error']
-

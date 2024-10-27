@@ -12,6 +12,8 @@ class SpotifyAPI:
             'Authorization': f'Bearer {api_key}',
             "Accept": "application/json",
             "Content-Type": "application/json"
+            # 'Connection': 'keep-alive',
+            # 'User-Agent': 'python-requests/2.32.3',
         }
 
     def _validate_request(request_method):
@@ -22,6 +24,10 @@ class SpotifyAPI:
             else:
                 raise Exception(f"Error with request {request_method}. Reason: {response}")
         return inner1
+
+    @_validate_request
+    def user_info(self) -> str:
+        return requests.get(f"{self.api_url}me", headers=self.headers)
 
     @_validate_request
     def audio_features(self, track_id: str) -> requests.Response:
@@ -152,3 +158,5 @@ class SpotifyAPI:
 
         if len(uris) != 0:
             self._add_tracks_to_playlis(playlist_id, uris)
+
+        return playlist_id

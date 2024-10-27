@@ -10,7 +10,9 @@ from suggestio.spotify_api.authentication import hash_userid, SpotifyAuth
 from django.core.cache import cache
 from django.contrib.auth.models import User
 
+from suggestio.forms import CreatePlaylistForm
 from suggestio.spotify_api.spotify_api import SpotifyAPI
+from suggestio.spotify_api.suggesion_methods import create_based_playlist
 
 
 class AccessView(LoginRequiredMixin, UserPassesTestMixin, View):
@@ -136,3 +138,68 @@ class TestRequestView(LoginRequiredMixin, UserPassesTestMixin, View):
 
         return render(request, 'suggestio/api_functionality_methods.html', context=context)
 
+class CreateSuggestionPlaylistView(LoginRequiredMixin, UserPassesTestMixin, View):
+    def handle_no_permission(self):
+        return redirect('suggestio:spotify-access')
+
+    def test_func(self):
+        return SpotifyAuthData.objects.filter(user=self.request.user).exists()
+
+    def post(self, request: HttpRequest) -> HttpResponse:
+        context = dict()
+
+        # todo add functon for caching auth key
+        u_id = request.user.id
+        auth_key = cache.get(str(u_id) + '_auth_token')
+
+        if auth_key is None:
+            # we can be sure that refresh token exists bc we have test_func above
+            a_data = SpotifyAuthData.objects.get(user=request.user)
+
+            rToken, auth_key, expires_in = SpotifyAuth().refrsh_auth_token(a_data.refresh_token)
+
+            if rToken is not None:
+                a_data.refresh_token = rToken
+                a_data.save()
+
+            cache.set(str(u_id) + '_auth_token', auth_key, expires_in)
+
+        api = SpotifyAPI(auth_key)
+
+        form = CreatePlaylistForm(request)
+
+        context = {'form': form}
+
+        if form.is_valid():
+            playlist_id = form.cleaned_data.get('playlist_id')
+            try:
+                new_playlist_id = create_based_playlist(api, playlist_id, "django playlist",
+                                                    True)
+                context['link'] = f"https://open.spotify.com/playlist/{new_playlist_id}"
+            except Exception as e:
+                context['error'] = e
+
+        return render(request, 'suggestio/create_playlist.html', context=context)
+
+    def get(self, request: HttpRequest) -> HttpResponse:
+        context = dict()
+
+        # todo add functon for caching auth key
+        u_id = request.user.id
+        auth_key = cache.get(str(u_id) + '_auth_token')
+
+        if auth_key is None:
+            # we can be sure that refresh token exists bc we have test_func above
+            a_data = SpotifyAuthData.objects.get(user=request.user)
+
+            rToken, auth_key, expires_in = SpotifyAuth().refrsh_auth_token(a_data.refresh_token)
+
+            if rToken is not None:
+                a_data.refresh_token = rToken
+                a_data.save()
+
+            cache.set(str(u_id) + '_auth_token', auth_key, expires_in)
+
+        context = {'form': CreatePlaylistForm()}
+
+        return render(request, 'suggestio/create_playlist.html', context=context)

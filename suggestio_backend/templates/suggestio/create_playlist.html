@@ -1,0 +1,15 @@
+{% extends 'suggestio/base.html' %}
+
+{% block main %}
+    <form>
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Create playlist</button>
+    </form>
+    {% if link is not None %}
+        <h2> <a href="{{ link }}">New playlist!</a> </h2>
+    {% endif %}
+    {% if error is not None %}
+        <h2> Error: {{ error }} </h2>
+    {% endif %}
+{% endblock %}
