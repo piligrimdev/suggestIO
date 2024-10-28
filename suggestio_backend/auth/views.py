@@ -12,7 +12,7 @@ from django.views.generic import CreateView
 class SignUpView(CreateView):
     template_name = 'auth/login.html'
     form_class = UserCreationForm
-    success_url = reverse_lazy('dev:dev-index')
+    success_url = reverse_lazy('suggestio:suggestio-index')
 
     def form_valid(self, form):
         response = super().form_valid(form)
@@ -25,6 +25,11 @@ class SignUpView(CreateView):
             login(self.request, user)
 
         return response
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["signup"] = True
+        return context
 
 
 class LogoutView(View):

@@ -17,6 +17,7 @@ gunicorn = "^23.0.0"
 drf-spectacular = "^0.27.2"
 django-encrypted-model-fields = "^0.6.5"
 requests = "^2.32.3"
+django-bootstrap5 = "^24.3"
 
 
 [build-system]

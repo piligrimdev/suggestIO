@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'django.contrib.postgres', # postgres integration
     'debug_toolbar',
     'encrypted_model_fields',  # encryption for refresh auth tokens of SpotifyAPI
+    'django_bootstrap5',
 
     'dev.apps.DevConfig',
     'suggestio.apps.SuggestioConfig',
@@ -167,9 +168,14 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+    "/var/www/static/",
+]
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-LOGIN_REDIRECT_URL = 'dev:dev-index'
+LOGIN_REDIRECT_URL = 'suggestio:suggestio-index'
 LOGIN_URL = 'auth:login'

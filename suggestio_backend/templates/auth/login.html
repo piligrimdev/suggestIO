@@ -1,4 +1,4 @@
-{% extends 'auth/base.html' %}
+{% extends 'base.html' %}
 
 {% block main %}
     {%  if error|length > 0 %}
@@ -9,4 +9,7 @@
         {{ form }}
         <button type="submit">Log in</button>
     </form>
+    {% if signup is None %}
+        <h4>If you dont have and account, you can <a href="{% url 'auth:signup' %}">sign up.</a></h4>
+    {% endif %}
 {%  endblock %}

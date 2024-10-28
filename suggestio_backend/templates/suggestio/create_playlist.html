@@ -1,15 +1,20 @@
-{% extends 'suggestio/base.html' %}
+{% extends 'base.html' %}
+{% load django_bootstrap5 %}
 
 {% block main %}
     <form method="post">
         {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Create playlist</button>
+          {% bootstrap_form form %}
+          {% bootstrap_button button_type="submit" content="Create playlist" %}
     </form>
     {% if link is not None %}
-        <h2> <a href="{{ link }}">New playlist!</a> </h2>
+        <div class="card border-success mb-3">
+            <h2> <a href="{{ link }}">New playlist!</a> </h2>
+        </div>
     {% endif %}
     {% if error is not None %}
-        <h2> Error: {{ error }} </h2>
+        <div class="card text-white bg-danger mb-3">
+            <h2> Error: {{ error }} </h2>
+        </div>
     {% endif %}
 {% endblock %}

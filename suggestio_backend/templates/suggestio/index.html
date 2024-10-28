@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% load django_bootstrap5 %}
+
+{% block main %}
+    <div class="container-fluid">
+        <h1>Spotify suggestIOns!</h1>
+        <div class="card text-white bg-primary mb-3" style="max-width: 20rem;">
+            <div class="card-header">How?</div>
+            <div class="card-body">
+                <h4 class="card-title">How it work?</h4>
+                <p class="card-text">Service takes your playlist id, group artist by similarity and searches for songs with
+                average song parameters for each group.</p>
+            </div>
+        </div>
+    </div>
+{% endblock %}

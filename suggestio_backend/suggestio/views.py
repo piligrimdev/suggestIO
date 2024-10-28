@@ -3,6 +3,7 @@ from django.views import View
 
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render, redirect
+from django.views.generic import TemplateView
 
 from suggestio.mixins import DenyAuthorizedUserMixin, CacheAuthorizedUserMixin
 from suggestio.models import SpotifyAuthData
@@ -137,3 +138,6 @@ class CreateSuggestionPlaylistView(LoginRequiredMixin, CacheAuthorizedUserMixin,
         context = {'form': CreatePlaylistForm()}
 
         return render(request, 'suggestio/create_playlist.html', context=context)
+
+class IndexView(TemplateView):
+    template_name = "suggestio/index.html"
