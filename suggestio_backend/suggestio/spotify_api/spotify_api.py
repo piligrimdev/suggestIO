@@ -3,6 +3,9 @@ from dotenv import load_dotenv
 
 import requests
 import json
+import logging
+
+logger = logging.getLogger(__name__)
 
 class SpotifyAPI:
     def __init__(self, api_key: str):
@@ -20,9 +23,13 @@ class SpotifyAPI:
         def inner1(*args, **kwargs) -> dict | None:
             response = request_method(*args, **kwargs)
             if response.ok:
+                logger.debug(f"Request method {request_method} with args({args}) and kwargs({kwargs}) returned code OK")
                 return response.json()
             else:
-                raise Exception(response.json()['error']['message'])
+                error_message = response.json()['error']['message']
+                logger.debug(f"Request method {request_method} with args({args}) and kwargs({kwargs})"
+                             f" returned error: {error_message}")
+                raise Exception(error_message)
         return inner1
 
     @_validate_request

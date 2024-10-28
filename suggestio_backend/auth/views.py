@@ -7,7 +7,9 @@ from django.urls import reverse_lazy
 
 from django.views import View
 from django.views.generic import CreateView
+import logging
 
+logger = logging.getLogger(__name__)
 
 class SignUpView(CreateView):
     template_name = 'auth/login.html'
@@ -22,6 +24,7 @@ class SignUpView(CreateView):
 
         user = authenticate(self.request, username=uname, password=password)
         if user:
+            logger.debug(f"Creater user with name {uname}")
             login(self.request, user)
 
         return response

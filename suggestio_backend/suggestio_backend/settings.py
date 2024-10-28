@@ -179,3 +179,44 @@ STATICFILES_DIRS = [
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_REDIRECT_URL = 'suggestio:suggestio-index'
 LOGIN_URL = 'auth:login'
+
+LOG_FILE_NAME = BASE_DIR / os.getenv('LOG_FILE_NAME')
+LOG_FILE_SIZE = int(os.getenv('LOG_FILE_SIZE_BYTES')) * 1024 * 1024  # макс размер 1 лога в байтах
+LOG_FILE_COUNT = int(os.getenv('LOG_FILES_ROTATION_COUNT'))  # сколько файлов будет в ротации + 1
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'filters': {
+        'require_debug_true': {  # когда включен дебаг режим
+            '()': 'django.utils.log.RequireDebugTrue',
+        },
+    },
+    'formatters': {
+        'verbose': {
+          'format': '%(asctime)s [%(levelname)s] %(name)s: %(message)s'
+          # asctime - время, levelname - название уровня, т.е. INFO, DEBUG итд
+          # name - имя логера, message - сообщение логеру
+        },
+    },
+    'handlers': {
+        'console': {  # в консоль
+            'level': 'DEBUG',
+            'filters': ['require_debug_true'],
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose'
+        },
+        'logfile': {  # в файл
+            # логфайл с ротацией(запись в новый и перенос записей в старый)
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': LOG_FILE_NAME,
+            'maxBytes': LOG_FILE_SIZE,
+            'backupCount': LOG_FILE_COUNT,
+            'formatter': 'verbose'
+        }
+    },
+    'root': {
+        'handlers': ['console', 'logfile'],
+        'level': 'DEBUG'
+    }
+}

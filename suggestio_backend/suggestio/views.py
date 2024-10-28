@@ -16,6 +16,10 @@ from suggestio.forms import CreatePlaylistForm
 from suggestio.spotify_api.spotify_api import SpotifyAPI
 from suggestio.spotify_api.suggesion_methods import create_based_playlist
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 class AccessView(LoginRequiredMixin, DenyAuthorizedUserMixin, View):
     def get(self, request: HttpRequest) -> HttpResponse:
@@ -25,6 +29,7 @@ class AccessView(LoginRequiredMixin, DenyAuthorizedUserMixin, View):
         user_h = hash_userid(u_id)
 
         cache.set(user_h, u_id, 60*2)
+        logger.debug(f'Cached state for user with id={u_id}')
 
         link = SpotifyAuth().get_auth_link(user_h)
 
@@ -56,11 +61,15 @@ class CallbackView(LoginRequiredMixin, DenyAuthorizedUserMixin, View):
 
         if 'error' in request.GET.keys():
             context['error'] = f"Error occured while retrieving auth link: {request.GET.get('error')}"
+            logger.debug(f"Error occured while retrieving auth link for user with id={request.user.id}:"
+                         f" {request.GET.get('error')}")
         else:
             state = request.GET.get('state')  # get state from url
             u_id = cache.get(state) # search for it in cache
             if u_id is None: # if it not founed - either cache expired or state was compromised
                 context['error'] = 'Error with state reason.'
+                logger.debug(f"State in callback request url does not"
+                             f" match cached state for user with id={request.user.id}")
             else:  # if there is one - match it with user and get auth code for it
                 cache.delete(state) # delete hash from cache
 
@@ -78,6 +87,7 @@ class CallbackView(LoginRequiredMixin, DenyAuthorizedUserMixin, View):
                 # save auth_token in cache with expire time
                 cache.set(str(u_id) + '_auth_token', authToken, expires_in)
                 context['seconds'] = expires_in
+                logger.debug(f"Retrieved auth and refresh tokens for user with id={request.user.id}")
 
         return render(request, 'suggestio/authenticated.html',
                       context=context)
@@ -126,11 +136,15 @@ class CreateSuggestionPlaylistView(LoginRequiredMixin, CacheAuthorizedUserMixin,
         if form.is_valid():
             playlist_id = form.cleaned_data.get('playlist_id')
             try:
+                logger.debug(f"Creating suggestions for playlist with id={playlist_id}"
+                             f" for user with id={request.user.id}")
                 new_playlist_id = create_based_playlist(api, playlist_id, "django playlist",
                                                     True)
                 context['link'] = f"https://open.spotify.com/playlist/{new_playlist_id}"
+                logger.debug(f"Created playlist for user with id={request.user.id}: {context['link']}")
             except Exception as e:
                 context['error'] = e
+                logger.debug(f"Error occured on suggestion for user with id={request.user.id}: {e}")
 
         return render(request, 'suggestio/create_playlist.html', context=context)
 

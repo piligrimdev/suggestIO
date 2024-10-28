@@ -27,9 +27,11 @@ from django.shortcuts import redirect
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('__debug__/', include(debug_toolbar.urls)),
-    path('dev/', include('dev.urls')),
     path('auth/', include('auth.urls')),
     path('suggestio/', include('suggestio.urls')),
     path('', lambda req: redirect('suggestio:suggestio-index')),
 ] #+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
+if settings.DEBUG:
+    urlpatterns.append(path('__debug__/', include(debug_toolbar.urls)))
+    urlpatterns.append(path('dev/', include('dev.urls')))

@@ -89,3 +89,4 @@ local_settings.py
 .env
 suggestio_backend/db.sqlite3
 .venv/
+*.log

@@ -8,6 +8,9 @@ import hashlib
 import base64
 import string
 import random
+import logging
+
+logger = logging.getLogger(__name__)
 
 load_dotenv()
 
@@ -44,11 +47,14 @@ class SpotifyAuth(object):
             'state': state
         }
 
+        logger.debug(f"Retrieving auth link")
         response =  requests.get("https://accounts.spotify.com/authorize", params=payload)
 
         if response.ok:
+            logger.debug(f"Auth link retrieved: {response.url}")
             return response.url
         else:
+            logger.debug(f"Auth link retrieving failed")
             raise Exception("Status code of request for auth code is not OK")
 
     def get_auth_tokens(self, code) -> tuple[str, int]:
@@ -67,6 +73,7 @@ class SpotifyAuth(object):
         headers['Authorization'] = 'Basic {}'.format(byt)
         headers['Content-Type'] = 'application/x-www-form-urlencoded'
 
+        logger.debug(f"Retrieving auth tokens")
         data = requests.post('https://accounts.spotify.com/api/token',
                              data=payload, headers=headers)
 
@@ -75,11 +82,15 @@ class SpotifyAuth(object):
             refreshToken = data_json['refresh_token']
             authToken = data_json['access_token']
             expires_in = int(data_json['expires_in'])
+
+            logger.debug(f"Auth tokens retrieved")
             return (refreshToken, authToken, expires_in)
         else:
             error = json.loads(data.text)  # should be refactored
-            raise Exception(f"Error while retrieving auth tokens:"
-                            f" {error['error']}: {error['error_description']}")
+            info_text = f"Error while retrieving auth tokens:" \
+                        f" {error['error']}: {error['error_description']}"
+            logger.debug(info_text)
+            raise Exception(info_text)
 
     def refrsh_auth_token(self, refresh_token) -> tuple[str, int] | None:
         body = {
@@ -97,15 +108,20 @@ class SpotifyAuth(object):
             'Authorization': 'Basic {}'.format(byt)
         }
 
+        logger.debug(f"Refreshing tokens")
         data = requests.post('https://accounts.spotify.com/api/token', headers=headers, params=body)
         js = data.json()
         if data.ok:
             if 'refresh_token' in js.keys():
                 new_r_token = js['refresh_token']
+                logger.debug(f"Refresh token updated")
             else:
                 new_r_token = None
             new_a_token = js['access_token']
             expires_in = int(js['expires_in'])
+            logger.debug(f"Auth tokens refreshed")
             return new_r_token, new_a_token, expires_in
         else:
+            logger.debug(f"Error while retrieving auth tokens: {js['error']}")
             raise Exception(js['error'])
+
