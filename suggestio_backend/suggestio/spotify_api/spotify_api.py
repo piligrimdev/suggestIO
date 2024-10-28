@@ -22,7 +22,7 @@ class SpotifyAPI:
             if response.ok:
                 return response.json()
             else:
-                raise Exception(f"Error with request {request_method}. Reason: {response}")
+                raise Exception(response.json()['error']['message'])
         return inner1
 
     @_validate_request

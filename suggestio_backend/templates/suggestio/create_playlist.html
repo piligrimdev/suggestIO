@@ -1,7 +1,7 @@
 {% extends 'suggestio/base.html' %}
 
 {% block main %}
-    <form>
+    <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
         <button type="submit">Create playlist</button>
