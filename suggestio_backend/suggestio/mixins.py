@@ -15,19 +15,25 @@ class CacheAuthorizedUserMixin(UserPassesTestMixin):
         auth_key = cache.get(str(u_id) + '_auth_token')
 
         if auth_key is None:
-            rToken, auth_key, expires_in = SpotifyAuth().refrsh_auth_token(user_a_data.refresh_token)
+            try:
+                rToken, auth_key, expires_in = SpotifyAuth().refrsh_auth_token(user_a_data.refresh_token)
 
-            if rToken is not None:
-                user_a_data.refresh_token = rToken
-                user_a_data.save()
+                if rToken is not None:
+                    user_a_data.refresh_token = rToken
+                    user_a_data.save()
+            except Exception as e:
+                user_a_data.delete()
+                return False
 
             cache.set(str(u_id) + '_auth_token', auth_key, expires_in)
+        return True
 
     def test_func(self):
         user_a_data = SpotifyAuthData.objects.filter(user=self.request.user).first()
+        flag = False
         if user_a_data:
-            self.cache_token(user_a_data)
-        return user_a_data is not None
+            flag = self.cache_token(user_a_data)
+        return user_a_data is not None and flag
 
 class DenyAuthorizedUserMixin(UserPassesTestMixin):
     def get_permission_denied_message(self):
