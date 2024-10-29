@@ -105,11 +105,11 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',   # Используется PostgreSQL
         #'NAME': 'postgres',
-        'NAME': os.getenv('PGSQL_NAME'), # Имя базы данных
+        'NAME': os.getenv('POSTGRES_NAME'), # Имя базы данных
         #'USER': 'postgres',
-        'USER': os.getenv('PGSQL_USER'), # Имя пользователя
+        'USER': os.getenv('POSTGRES_USER'), # Имя пользователя
         #'PASSWORD': 'postgres',
-        'PASSWORD': os.getenv('PGSQL_PASS'), # Пароль пользователя
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD'), # Пароль пользователя
         #'HOST': 'pgdb',
         'HOST': os.getenv('PGSQL_HOST'), # Наименование контейнера для базы данных в Docker Compose
         #'PORT': '5432',
@@ -166,11 +166,10 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = 'static/'
-
+STATIC_URL = '/static/'
+#STATIC_ROOT = os.path.join(BASE_DIR, "static")
 STATICFILES_DIRS = [
-    BASE_DIR / "static",
-    "/var/www/static/",
+    os.path.join(BASE_DIR, "static"),
 ]
 
 # Default primary key field type
