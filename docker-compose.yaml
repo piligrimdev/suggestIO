@@ -1,6 +1,15 @@
 version: "3.9" # версия docker-compose
 
 services:
+  nginx:
+    build: ./nginx
+    volumes:
+      - static_volume:/home/app/web/static
+    ports:
+      - 1337:80
+    depends_on:
+      - web
+
   web:
     build:
       dockerfile: ./DOCKERFILE
@@ -13,8 +22,10 @@ services:
     command: > 
       sh -c "python manage.py migrate &&
              gunicorn suggestio_backend.wsgi:application --bind 0.0.0.0:8080"
-    ports:
-      - "8000:8080"
+    #ports:
+    #  - "8000:8080"
+    expose:
+      - 8080
     restart: always
     depends_on:
       db:
@@ -22,7 +33,7 @@ services:
       cache:
         condition: service_healthy
     volumes:
-      - ./web:/usr/src/app
+      - static_volume:/home/app/web/static
 
   db:
     hostname: postgres
@@ -57,3 +68,4 @@ services:
 volumes:
   dbdata:
   cache_data:
+  static_volume:
