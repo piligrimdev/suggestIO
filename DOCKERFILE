@@ -7,7 +7,7 @@ RUN mkdir /home/app/web/
 RUN mkdir /home/app/web/static
 WORKDIR /home/app/web
 
-COPY suggestio_backend/static /home/app/static
+COPY suggestio_backend/static /home/app/web/static
 
 RUN pip install --upgrade pip "poetry==1.8.4"
 
