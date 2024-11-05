@@ -34,6 +34,7 @@ jobs:
         tags: ${{ secrets.DOCKER_HUB_USERNAME }}/suggestio:${{ github.sha }}
 
   build-nginx:
+    environment: env
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
