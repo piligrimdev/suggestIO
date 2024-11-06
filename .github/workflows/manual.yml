@@ -69,6 +69,12 @@ jobs:
       uses: actions/checkout@v3
       with:
         ref: yacloud-deploy
+        
+    - name: Login to Yandex Cloud Container Registry
+      id: login-cr
+      uses: yc-actions/yc-cr-login@v1
+      with:
+        yc-sa-json-credentials: ${{ secrets.YC_SA_JSON_CREDENTIALS }}
 
     - name: Deploy COI VM
       id: deploy-coi
@@ -81,11 +87,6 @@ jobs:
         folder-id: ${{ secrets.YC_FOLDER_ID }}
         VM-name: ${{ secrets.YC_VM_NAME }}
         vm-service-account-id: ${{ secrets.YC_SERVICE_ACCOUNT_ID }}
-        vm-cores: 2
-        vm-platform-id: 'standard-v2'
-        vm-memory: 512Mb
-        vm-disk-size: 10Gb
-        vm-core-fraction: 5
         vm-subnet-id: ${{ secrets.YC_SUBNET_ID }}
         docker-compose-path: './yacloud/docker-compose.yaml'
         user-data-path: './yacloud/user-data.yaml'
