@@ -82,6 +82,8 @@ jobs:
       env:
         BACKEND_IMAGE: ${{ secrets.DOCKER_HUB_USERNAME }}/suggestio:${{ github.sha }}
         NGINX_IMAGE: ${{ secrets.DOCKER_HUB_USERNAME }}/suggestio-nginx:${{ github.sha }}
+        YC_VM_USERNAME: ${{ secrets.YC_VM_USERNAME }}
+        YC_VM_SSH: ${{ secrets.YC_VM_SSH }}
       with:
         yc-sa-json-credentials: ${{ secrets.YC_SA_JSON_CREDENTIALS }}
         folder-id: ${{ secrets.YC_FOLDER_ID }}
