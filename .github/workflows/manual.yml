@@ -95,5 +95,6 @@ jobs:
         vm-memory: 512Mb
         vm-disk-size: 30Gb
         vm-core-fraction: 5
+        vm-zone-id: 'ru-central1-d'
         docker-compose-path: './yacloud/docker-compose.yaml'
         user-data-path: './yacloud/user-data.yaml'
