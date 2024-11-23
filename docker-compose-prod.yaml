@@ -1,0 +1,77 @@
+version: "3.9" # версия docker-compose
+
+services:
+  nginx:
+    image: piligrimdev/suggestio-nginx:latest
+    volumes:
+      - static_volume:/home/app/web/static
+    ports:
+      - 1337:80
+    depends_on:
+      - web
+
+  web:
+    image: piligrimdev/suggestio-web:latest
+    hostname: suggestio
+    env_file:
+      - .env
+    environment:
+      - PGSQL_HOST=postgres
+      - REDIS_ADDR=rediscache
+    command: > 
+      sh -c "python manage.py migrate &&
+             gunicorn suggestio_backend.wsgi:application --bind 0.0.0.0:8080"
+    #ports:
+    #  - "8000:8080"
+    expose:
+      - 8080
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+      cache:
+        condition: service_healthy
+    volumes:
+      - static_volume:/home/app/web/static
+
+  db:
+    hostname: postgres
+    image: postgres
+    restart: always
+    env_file:
+      - .env
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready" ]
+      interval: 1s
+      timeout: 5s
+      retries: 10
+    ports:
+      - "5432:5432"
+    volumes:
+      - dbdata:/var/lib/postgresql/data
+    user: postgres
+
+  cache:
+    hostname: rediscache
+    image: redis
+    restart: always
+    ports:
+      - "6379:6379"
+    env_file:
+      - .env
+    healthcheck:
+      test: [ "CMD", "redis-cli", "--raw", "incr", "ping" ]
+    volumes:
+      - cache_data:/data
+
+  watchtower:
+    image: containrrr/watchtower
+    container_name: watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: --interval 30 web nginx
+
+volumes:
+  dbdata:
+  cache_data:
+  static_volume:
