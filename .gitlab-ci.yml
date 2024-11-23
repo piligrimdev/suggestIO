@@ -1,16 +1,13 @@
 stages:
   - build
 
-build-nginx:
+build:
   stage: build
   script:
     - docker login -u $DOCKER_REGISTRY_USER -p $DOCKER_REGISTRY_KEY
+    
     - docker build -t $DOCKER_REGISTRY_USER/suggestio-nginx nginx/
     - docker push $DOCKER_REGISTRY_USER/suggestio-nginx
 
-build-web:
-  stage: build
-  script:
-    - docker login -u $DOCKER_REGISTRY_USER -p $DOCKER_REGISTRY_KEY
     - docker build -t $DOCKER_REGISTRY_USER/suggestio-web -f DOCKERFILE .
     - docker push $DOCKER_REGISTRY_USER/suggestio-web
