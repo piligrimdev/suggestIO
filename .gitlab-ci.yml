@@ -1,8 +1,27 @@
+default:
+  image: python:3.12
+
 stages:
-  - build
+  - linting
+  - testing
+  - building
+
+flake8:
+  stage: linting
+  script:
+    - pip install flake8
+    - flake8 suggestio_backend
+
+django-tests:
+  stage: testing
+  script:
+    - pip install
+    - poetry install
+    - cd suggestio_backend
+    - python manage.py test
 
 build:
-  stage: build
+  stage: building
   script:
     - docker login -u $DOCKER_REGISTRY_USER -p $DOCKER_REGISTRY_KEY
     
